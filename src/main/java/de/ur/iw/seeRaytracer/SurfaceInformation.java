@@ -20,6 +20,7 @@ public class SurfaceInformation {
         return position;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Vector3D getNormal() {
         return normal;
     }

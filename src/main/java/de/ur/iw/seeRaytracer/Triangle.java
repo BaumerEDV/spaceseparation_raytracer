@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.checkerframework.checker.nullness.compatqual.NonNullType;
 
 public class Triangle implements Iterable<Vector3D> {
     private final Vector3D[] vertices;
@@ -13,6 +14,7 @@ public class Triangle implements Iterable<Vector3D> {
         this.vertices = vertices;
     }
 
+    @SuppressWarnings("unused")
     public Vector3D getVertex(int index) {
         return vertices[index];
     }
@@ -53,7 +55,7 @@ public class Triangle implements Iterable<Vector3D> {
         return new SurfaceInformation(position, normal);
     }
 
-    @Override
+    @Override @NonNullType
     public UnmodifiableIterator<Vector3D> iterator() {
         return Iterators.forArray(vertices);
     }

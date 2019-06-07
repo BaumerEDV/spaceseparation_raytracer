@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Scene {
-    private final Collection<Triangle> triangles = new ArrayList<>();
+    private VoxelsContainer voxelsContainer;
 
     /**
      * Adds triangles to this scene.
      */
     public void addAll(Collection<Triangle> triangles) {
-        this.triangles.addAll(triangles);
+        //this.triangles.addAll(triangles);
+        this.voxelsContainer = new VoxelsContainer(triangles);
     }
 
     /**
@@ -39,6 +40,25 @@ public class Scene {
     private SurfaceInformation findFirstIntersection(Ray ray) {
         SurfaceInformation closestSurface = null;
         double distanceToClosestSurface = Double.POSITIVE_INFINITY;
+
+        java.util.List<Voxel> voxelsRayVisits = voxelsContainer.getOrderedListOfVoxelsThatRayIntersects(ray);
+
+        for (Voxel voxel : voxelsRayVisits){
+            for(Triangle triangle : voxel.containedTriangles()){
+                var surface = triangle.intersectWith(ray);
+                if(surface != null){
+                    if(voxel.isVectorPointInVoxel(surface.getPosition())){
+                        double distanceToSurface = surface.getPosition().distance(ray.getOrigin());
+                        if(distanceToSurface < distanceToClosestSurface){
+                            distanceToClosestSurface = distanceToSurface;
+                            closestSurface = surface;
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
         for (var triangle : triangles) {
             var surface = triangle.intersectWith(ray);
             if (surface != null) {
@@ -48,7 +68,7 @@ public class Scene {
                     closestSurface = surface;
                 }
             }
-        }
+        }*/
         return closestSurface;
     }
 }

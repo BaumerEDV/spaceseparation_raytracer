@@ -46,7 +46,7 @@ public class Voxel {
         containedTriangles.add(triangle);
     }
 
-    public Collection containedTriangles() {
+    public Collection<Triangle> containedTriangles() {
         return containedTriangles;
     }
 

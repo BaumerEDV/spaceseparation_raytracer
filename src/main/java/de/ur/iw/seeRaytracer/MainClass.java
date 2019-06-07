@@ -14,8 +14,8 @@ public class MainClass {
         var bunnyOBJ = ClassLoader.getSystemResourceAsStream("bunny.obj");
         var triangles = DataFileReader.parseTrianglesFromOBJ(bunnyOBJ);
 
-        //int imageWidth = 1920;
-        int imageWidth = 160;
+        int imageWidth = 1920;
+        //int imageWidth = 160;
 
         Camera camera = createCameraThatLooksAtBunnyTriangles(triangles);
 

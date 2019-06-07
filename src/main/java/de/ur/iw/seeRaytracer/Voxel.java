@@ -5,8 +5,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static jdk.jshell.spi.ExecutionControl.NotImplementedException;
-
 public class Voxel {
 
     //longest triangle edge is 0.028something
@@ -22,11 +20,10 @@ public class Voxel {
     }
 
     public boolean isVectorPointInVoxel(Vector3D v) {
-        boolean result = true;
         double voxelOriginX = coordinate.getX() * VOXEL_WIDTH;
         double voxelOriginY = coordinate.getY() * VOXEL_WIDTH;
         double voxelOriginZ = coordinate.getZ() * VOXEL_WIDTH;
-        result &= voxelOriginX <= v.getX();
+        boolean result = voxelOriginX <= v.getX();
         result &= voxelOriginY <= v.getY();
         result &= voxelOriginZ <= v.getZ();
 
@@ -49,7 +46,7 @@ public class Voxel {
         return containedTriangles;
     }
 
-    public String toString(){
+    public String toString() {
         return "Voxel (" + coordinate.getX() + ", " + coordinate.getY() + ", " + coordinate.getZ() + ")";
     }
 

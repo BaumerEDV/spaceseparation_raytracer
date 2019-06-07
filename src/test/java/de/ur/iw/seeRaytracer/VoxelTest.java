@@ -22,7 +22,7 @@ public class VoxelTest {
         Voxel v = new Voxel(new VoxelPos(0, 0, 0));
         for (int i = 0; i < 6; i++) {
             int initialTriangleCount = v.containedTriangles().size();
-            v.addTriangle(new Triangle(new Vector3D[]{Vector3D.ZERO, Vector3D.PLUS_I, Vector3D.MINUS_I}));
+            v.addTriangle(new Triangle(Vector3D.ZERO, Vector3D.PLUS_I, Vector3D.MINUS_I));
             int postTriangleCount = v.containedTriangles().size();
             assertEquals(initialTriangleCount + 1, postTriangleCount);
         }
@@ -68,7 +68,7 @@ public class VoxelTest {
     }
 
     @org.junit.jupiter.api.Test
-    void pointOppositeOriginIsOutsideVoxel(){
+    void pointOppositeOriginIsOutsideVoxel() {
         final double WIDTH = Voxel.VOXEL_WIDTH;
         for (int x = -3; x < 4; x++) {
             for (int y = -3; y < 4; y++) {
@@ -85,7 +85,7 @@ public class VoxelTest {
     }
 
     @org.junit.jupiter.api.Test
-    void pointOutsideVoxelIsOutsideVoxel(){
+    void pointOutsideVoxelIsOutsideVoxel() {
         final double WIDTH = Voxel.VOXEL_WIDTH;
         for (int x = -3; x < 4; x++) {
             for (int y = -3; y < 4; y++) {
@@ -104,6 +104,7 @@ public class VoxelTest {
 
     @org.junit.jupiter.api.Test
     void voxelWidthIsValid() {
+        //noinspection ConstantConditions
         assertTrue(Voxel.VOXEL_WIDTH > 0);
         //longest triangle edge: 0.028717610399887527
         //assertTrue(Voxel.VOXEL_WIDTH > 0.028717610399887527

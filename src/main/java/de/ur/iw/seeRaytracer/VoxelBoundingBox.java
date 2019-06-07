@@ -19,7 +19,9 @@ public class VoxelBoundingBox {
 
     public double realSpaceEuclidianDiagonalLength(){
         Vector3D min = this.min.toRealSpaceVector3D();
-        Vector3D max = this.max.toRealSpaceVector3D().add(new Vector3D(Voxel.VOXEL_WIDTH, Voxel.VOXEL_WIDTH, Voxel.VOXEL_WIDTH));
+        @SuppressWarnings("SuspiciousNameCombination")
+        Vector3D max = this.max.toRealSpaceVector3D()
+                .add(new Vector3D(Voxel.VOXEL_WIDTH, Voxel.VOXEL_WIDTH, Voxel.VOXEL_WIDTH));
         Vector3D diagonal = max.subtract(min);
         return diagonal.getNorm();
     }

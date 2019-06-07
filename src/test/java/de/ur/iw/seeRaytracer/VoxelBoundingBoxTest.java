@@ -27,6 +27,7 @@ public class VoxelBoundingBoxTest {
         assertEquals(new VoxelPos(3, -1, 4), box.max());
     }
 
+    @Test
     void diagonalIsCorrect(){
 
         VoxelBoundingBox box = new VoxelBoundingBox(new VoxelPos[]{new VoxelPos(0, 0, 0)});

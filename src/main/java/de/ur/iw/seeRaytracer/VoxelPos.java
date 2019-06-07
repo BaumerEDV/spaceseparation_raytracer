@@ -95,9 +95,15 @@ public class VoxelPos {
         return result;
     }
 
+    @Override
+    public int hashCode() {
+        return 137 * x + 149 * y + 163 * z;
+    }
+
 
     public Vector3D toRealSpaceVector3D() {
         return new Vector3D(x * Voxel.VOXEL_WIDTH, y * Voxel.VOXEL_WIDTH, z * Voxel.VOXEL_WIDTH);
     }
+
 
 }

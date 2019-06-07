@@ -70,6 +70,23 @@ public class VoxelsContainerTest {
         List<Voxel> voxels = vc.getOrderedListOfVoxelsThatRayIntersects(ray);
 
         assertEquals(2, voxels.size());
+        assertEquals(new VoxelPos(-1, -1, 0), voxels.get(0).position());
+        assertEquals(new VoxelPos(-1, -1, -1), voxels.get(1).position());
+
+
+
+    }
+
+    @Test
+    void anotherArbitraryRayHitsItsSupposedTargets(){
+
+        Vector3D rayOrigin = new Vector3D(-Voxel.VOXEL_WIDTH/2, -Voxel.VOXEL_WIDTH/2, -2);
+        Vector3D rayDirection = new Vector3D(0, 0, 1);
+        Ray ray = new Ray(rayOrigin, rayDirection.normalize());
+
+        List<Voxel> voxels = vc.getOrderedListOfVoxelsThatRayIntersects(ray);
+
+        assertEquals(2, voxels.size());
         assertEquals(new VoxelPos(-1, -1, -1), voxels.get(0).position());
         assertEquals(new VoxelPos(-1, -1, 0), voxels.get(1).position());
 

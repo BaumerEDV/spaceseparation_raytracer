@@ -127,9 +127,9 @@ public class VoxelsContainer {
         double yDelta = cellSize * yDir / ray.getNormalizedDirection().getY();
         double zDelta = cellSize * zDir / ray.getNormalizedDirection().getZ();
 
-        int xOut = (xDir < 0) ? -1 : cameraObjectBoundingBox.max().getX() - cameraObjectBoundingBox.min().getX(); //TODO: -1 is probably wrong? min.getX for -1 and max.getX for len?
-        int yOut = (yDir < 0) ? -1 : cameraObjectBoundingBox.max().getY() - cameraObjectBoundingBox.min().getY(); //maybe these last ones need a +1
-        int zOut = (zDir < 0) ? -1 : cameraObjectBoundingBox.max().getZ() - cameraObjectBoundingBox.min().getZ();
+        int xOut = (xDir < 0) ? cameraObjectBoundingBox.min().getX()-1 : cameraObjectBoundingBox.max().getX()+1; //TODO: -1 is probably wrong? min.getX for -1 and max.getX for len?
+        int yOut = (yDir < 0) ? cameraObjectBoundingBox.min().getY()-1 : cameraObjectBoundingBox.max().getY()+1; //maybe these last ones need a +1
+        int zOut = (zDir < 0) ? cameraObjectBoundingBox.min().getZ()-1 : cameraObjectBoundingBox.max().getZ()+1;
 
         for(;;){//for(int i = 0; i < 30; i++) {//should probably be while(true)
             if(xt < yt && xt < zt){

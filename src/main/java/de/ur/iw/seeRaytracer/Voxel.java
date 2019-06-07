@@ -19,6 +19,10 @@ public class Voxel {
         containedTriangles = new ArrayList<>();
     }
 
+    public VoxelPos position(){
+        return coordinate;
+    }
+
     public boolean isVectorPointInVoxel(Vector3D v) {
         double voxelOriginX = coordinate.getX() * VOXEL_WIDTH;
         double voxelOriginY = coordinate.getY() * VOXEL_WIDTH;

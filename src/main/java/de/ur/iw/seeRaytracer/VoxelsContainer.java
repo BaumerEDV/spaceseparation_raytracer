@@ -1,12 +1,11 @@
 package de.ur.iw.seeRaytracer;
 
-import com.google.common.collect.UnmodifiableIterator;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.checkerframework.checker.nullness.compatqual.NonNullType;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class VoxelsContainer {
 
@@ -84,9 +83,89 @@ public class VoxelsContainer {
         return voxels;
     }
 
-    /*public List<Triangle> getOrderedListOfVoxelsThatRayIntersects(){
-        throw new ExecutionControl.NotImplementedException("");
-    }*/
+    public List<Voxel> getOrderedListOfVoxelsThatRayIntersects(Ray ray) {
+        //throw new ExecutionControl.NotImplementedException("");
+
+        ArrayList<Voxel> visited = new ArrayList<>();
+
+        //https://github.com/sketchpunk/FunWithWebGL2/blob/master/lesson_074_voxel_ray_intersection/test.html
+
+        VoxelBoundingBox cameraObjectBoundingBox = new VoxelBoundingBox(
+                new VoxelPos[]{
+                        VoxelPosFactory.createFromRealSpaceVector(ray.getOrigin()),
+                        boundingBox.max(),
+                        boundingBox.min(),
+                }
+        );
+
+        Vector3D rStart = ray.getOrigin();
+        Vector3D rEnd = ray.getOrigin().add(cameraObjectBoundingBox.realSpaceEuclidianDiagonalLength(), ray.getNormalizedDirection());
+
+        int ix = (int) Math.min(Math.floor(rStart.getX() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getX());
+        int iy = (int) Math.min(Math.floor(rStart.getY() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getY());
+        int iz = (int) Math.min(Math.floor(rStart.getZ() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getZ());
+
+        int iix = (int) Math.min(Math.floor(rEnd.getX() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getX());
+        int iiy = (int) Math.min(Math.floor(rEnd.getY() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getY());
+        int iiz = (int) Math.min(Math.floor(rEnd.getZ() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getZ());
+
+        int xDir = (ray.getNormalizedDirection().getX() > 0) ? 1 : (ray.getNormalizedDirection().getX() < 0) ? -1 : 0;
+        int yDir = (ray.getNormalizedDirection().getY() > 0) ? 1 : (ray.getNormalizedDirection().getY() < 0) ? -1 : 0;
+        int zDir = (ray.getNormalizedDirection().getZ() > 0) ? 1 : (ray.getNormalizedDirection().getZ() < 0) ? -1 : 0;
+
+        double cellSize = Voxel.VOXEL_WIDTH;
+
+        double xBound = ((xDir > 0) ? ix + 1 : ix) * cellSize;
+        double yBound = ((yDir > 0) ? iy + 1 : iy) * cellSize;
+        double zBound = ((zDir > 0) ? iz + 1 : iz) * cellSize;
+
+        double xt = (xBound - rStart.getX()) / ray.getNormalizedDirection().getX();
+        double yt = (yBound - rStart.getY()) / ray.getNormalizedDirection().getY();
+        double zt = (zBound - rStart.getZ()) / ray.getNormalizedDirection().getZ();
+
+        double xDelta = cellSize * xDir / ray.getNormalizedDirection().getX();
+        double yDelta = cellSize * yDir / ray.getNormalizedDirection().getY();
+        double zDelta = cellSize * zDir / ray.getNormalizedDirection().getZ();
+
+        int xOut = (xDir < 0) ? -1 : cameraObjectBoundingBox.max().getX() - cameraObjectBoundingBox.min().getX(); //TODO: -1 is probably wrong? min.getX for -1 and max.getX for len?
+        int yOut = (yDir < 0) ? -1 : cameraObjectBoundingBox.max().getY() - cameraObjectBoundingBox.min().getY(); //maybe these last ones need a +1
+        int zOut = (zDir < 0) ? -1 : cameraObjectBoundingBox.max().getZ() - cameraObjectBoundingBox.min().getZ();
+
+        for(;;){//for(int i = 0; i < 30; i++) {//should probably be while(true)
+            if(xt < yt && xt < zt){
+                if(voxels.containsKey(new VoxelPos(ix, iy, iz))){
+                    visited.add(voxels.get(new VoxelPos(ix, iy, iz)));
+                }
+
+                ix += xDir;
+                if(ix == xOut){
+                    return visited;
+                }
+                xt += xDelta;
+            } else if(yt < zt){
+                if(voxels.containsKey(new VoxelPos(ix, iy, iz))){
+                    visited.add(voxels.get(new VoxelPos(ix, iy, iz)));
+                }
+                iy += yDir;
+                if(iy == yOut){
+                    return visited;
+                }
+                yt += yDelta;
+            } else{
+                if(voxels.containsKey(new VoxelPos(ix, iy, iz))){
+                    visited.add(voxels.get(new VoxelPos(ix, iy, iz)));
+                }
+
+                iz += zDir;
+                if(iz == zOut){
+                    return visited;
+                }
+                zt += zDelta;
+            }
+
+
+        }
+    }
 
 
 }

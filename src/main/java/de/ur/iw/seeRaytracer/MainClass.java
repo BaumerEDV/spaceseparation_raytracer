@@ -25,6 +25,7 @@ public class MainClass {
         int imageHeight = (int) (imageWidth / camera.getAspectRatio());
         var image = renderImage(scene, camera, imageWidth, imageHeight);
         ImageIO.write(image, "PNG", new File("bunny.png"));
+
     }
 
     /**

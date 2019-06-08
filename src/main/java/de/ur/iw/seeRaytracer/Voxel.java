@@ -8,7 +8,8 @@ import java.util.Collection;
 public class Voxel {
 
     //longest triangle edge is 0.028something
-    public static final double VOXEL_WIDTH = 0.03;
+    //public static double VOXEL_WIDTH = 0.03;
+    public static final double VOXEL_WIDTH = 0.003825; //empirically tried. anything between 0.004 and 0.0026 seems to work well
 
     private ArrayList<Triangle> containedTriangles;
     private VoxelPos coordinate;

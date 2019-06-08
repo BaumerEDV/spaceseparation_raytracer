@@ -130,33 +130,33 @@ public class VoxelsContainer {
 
         while (true) {
             if (xt < yt && xt < zt) {
-                if (voxels.containsKey(new VoxelPosition(ix, iy, iz))) {
-                    visited.add(voxels.get(new VoxelPosition(ix, iy, iz)));
-                }
+                addVoxelToListIfVoxelContainsTriangle(visited, new VoxelPosition(ix, iy, iz));
                 ix += xDir;
                 if (ix == xOut) {
                     return visited;
                 }
                 xt += xDelta;
             } else if (yt < zt) {
-                if (voxels.containsKey(new VoxelPosition(ix, iy, iz))) {
-                    visited.add(voxels.get(new VoxelPosition(ix, iy, iz)));
-                }
+                addVoxelToListIfVoxelContainsTriangle(visited, new VoxelPosition(ix, iy, iz));
                 iy += yDir;
                 if (iy == yOut) {
                     return visited;
                 }
                 yt += yDelta;
             } else {
-                if (voxels.containsKey(new VoxelPosition(ix, iy, iz))) {
-                    visited.add(voxels.get(new VoxelPosition(ix, iy, iz)));
-                }
+                addVoxelToListIfVoxelContainsTriangle(visited, new VoxelPosition(ix, iy, iz));
                 iz += zDir;
                 if (iz == zOut) {
                     return visited;
                 }
                 zt += zDelta;
             }
+        }
+    }
+
+    private void addVoxelToListIfVoxelContainsTriangle(List<Voxel> list, VoxelPosition position) {
+        if (voxels.containsKey(position)) {
+            list.add(voxels.get(position));
         }
     }
 

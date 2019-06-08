@@ -55,7 +55,8 @@ public class Triangle implements Iterable<Vector3D> {
         return new SurfaceInformation(position, normal);
     }
 
-    @Override @NonNullType
+    @Override
+    @NonNullType
     public UnmodifiableIterator<Vector3D> iterator() {
         return Iterators.forArray(vertices);
     }

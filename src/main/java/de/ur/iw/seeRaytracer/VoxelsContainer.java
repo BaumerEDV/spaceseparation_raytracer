@@ -9,7 +9,7 @@ import java.util.List;
 
 public class VoxelsContainer {
 
-    private HashMap<VoxelPos, Voxel> voxels;
+    private HashMap<VoxelPosition, Voxel> voxels;
     private VoxelBoundingBox boundingBox;
 
     public VoxelsContainer(Collection<Triangle> trianglesToBeDisplayed) {
@@ -21,7 +21,7 @@ public class VoxelsContainer {
     private void createVoxelsAndPutContainedTrianglesIntoThem(Collection<Triangle> triangles) {
         for (Triangle triangle : triangles) {
             var voxelsThisBelongsTo = createCollectionOfPositionsThisBelongsTo(triangle);
-            for (VoxelPos pos : voxelsThisBelongsTo) {
+            for (VoxelPosition pos : voxelsThisBelongsTo) {
                 voxels.putIfAbsent(pos, new Voxel(pos));
                 voxels.get(pos).addTriangle(triangle);
             }
@@ -29,15 +29,15 @@ public class VoxelsContainer {
     }
 
     private void createBoundingBoxFromTriangles(Collection<Triangle> triangles) {
-        ArrayList<VoxelPos> positions = new ArrayList<>();
+        ArrayList<VoxelPosition> positions = new ArrayList<>();
 
         for (Triangle triangle : triangles) {
             for (Vector3D vertex : triangle) {
-                positions.add(VoxelPosFactory.createFromRealSpaceVector(vertex));
+                positions.add(VoxelPositionFactory.createFromRealSpaceVector(vertex));
             }
         }
 
-        VoxelPos[] args = new VoxelPos[positions.size()];
+        VoxelPosition[] args = new VoxelPosition[positions.size()];
         for (int i = 0; i < args.length; i++) {
             args[i] = positions.get(i);
         }
@@ -47,13 +47,13 @@ public class VoxelsContainer {
 
     }
 
-    private Collection<VoxelPos> createCollectionOfPositionsThisBelongsTo(Triangle triangle) {
-        ArrayList<VoxelPos> result = new ArrayList<>();
+    private Collection<VoxelPosition> createCollectionOfPositionsThisBelongsTo(Triangle triangle) {
+        ArrayList<VoxelPosition> result = new ArrayList<>();
         final int SPACE_DIMENSIONS = 3;
-        VoxelPos[] vertexBounds = new VoxelPos[SPACE_DIMENSIONS];
+        VoxelPosition[] vertexBounds = new VoxelPosition[SPACE_DIMENSIONS];
         int i = 0;
         for (Vector3D vertex : triangle) {
-            vertexBounds[i] = VoxelPosFactory.createFromRealSpaceVector(vertex);
+            vertexBounds[i] = VoxelPositionFactory.createFromRealSpaceVector(vertex);
             i++;
         }
         VoxelBoundingBox box = new VoxelBoundingBox(vertexBounds);
@@ -67,7 +67,7 @@ public class VoxelsContainer {
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
-                    result.add(new VoxelPos(x, y, z));
+                    result.add(new VoxelPosition(x, y, z));
                 }
             }
         }
@@ -79,35 +79,32 @@ public class VoxelsContainer {
         return boundingBox;
     }
 
-    public HashMap<VoxelPos, Voxel> voxelsForTestsOnly() {
+    public HashMap<VoxelPosition, Voxel> voxelsForTestsOnly() {
         return voxels;
     }
 
     public List<Voxel> getOrderedListOfVoxelsThatRayIntersects(Ray ray) {
-        //throw new ExecutionControl.NotImplementedException("");
-
         ArrayList<Voxel> visited = new ArrayList<>();
 
-        //https://github.com/sketchpunk/FunWithWebGL2/blob/master/lesson_074_voxel_ray_intersection/test.html
+        //good part of this taken from: https://github.com/sketchpunk/FunWithWebGL2/blob/master/lesson_074_voxel_ray_intersection/test.html
+        //but with lots of bug fixing
+        //scientific basis: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.3443&rep=rep1&type=pdf
+        // A fast Voxel Traversal Algorithm for Ray Tracing by Amanatides and Wo
+        // basically a 3D version of Bresenham's algorithm for lines in pixel grids, but the paper doesn't quote that at all
 
         VoxelBoundingBox cameraObjectBoundingBox = new VoxelBoundingBox(
-                new VoxelPos[]{
-                        VoxelPosFactory.createFromRealSpaceVector(ray.getOrigin()),
+                new VoxelPosition[]{
+                        VoxelPositionFactory.createFromRealSpaceVector(ray.getOrigin()),
                         boundingBox.max(),
                         boundingBox.min(),
                 }
         );
 
         Vector3D rStart = ray.getOrigin();
-        Vector3D rEnd = ray.getOrigin().add(cameraObjectBoundingBox.realSpaceEuclidianDiagonalLength(), ray.getNormalizedDirection());
 
         int ix = (int) Math.min(Math.floor(rStart.getX() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getX());
         int iy = (int) Math.min(Math.floor(rStart.getY() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getY());
         int iz = (int) Math.min(Math.floor(rStart.getZ() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getZ());
-
-        int iix = (int) Math.min(Math.floor(rEnd.getX() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getX());
-        int iiy = (int) Math.min(Math.floor(rEnd.getY() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getY());
-        int iiz = (int) Math.min(Math.floor(rEnd.getZ() / Voxel.VOXEL_WIDTH), cameraObjectBoundingBox.max().getZ());
 
         int xDir = (ray.getNormalizedDirection().getX() > 0) ? 1 : (ray.getNormalizedDirection().getX() < 0) ? -1 : 0;
         int yDir = (ray.getNormalizedDirection().getY() > 0) ? 1 : (ray.getNormalizedDirection().getY() < 0) ? -1 : 0;
@@ -127,43 +124,39 @@ public class VoxelsContainer {
         double yDelta = cellSize * yDir / ray.getNormalizedDirection().getY();
         double zDelta = cellSize * zDir / ray.getNormalizedDirection().getZ();
 
-        int xOut = (xDir < 0) ? cameraObjectBoundingBox.min().getX()-1 : cameraObjectBoundingBox.max().getX()+1; //TODO: -1 is probably wrong? min.getX for -1 and max.getX for len?
-        int yOut = (yDir < 0) ? cameraObjectBoundingBox.min().getY()-1 : cameraObjectBoundingBox.max().getY()+1; //maybe these last ones need a +1
-        int zOut = (zDir < 0) ? cameraObjectBoundingBox.min().getZ()-1 : cameraObjectBoundingBox.max().getZ()+1;
+        int xOut = (xDir < 0) ? cameraObjectBoundingBox.min().getX() - 1 : cameraObjectBoundingBox.max().getX() + 1; //TODO: -1 is probably wrong? min.getX for -1 and max.getX for len?
+        int yOut = (yDir < 0) ? cameraObjectBoundingBox.min().getY() - 1 : cameraObjectBoundingBox.max().getY() + 1; //maybe these last ones need a +1
+        int zOut = (zDir < 0) ? cameraObjectBoundingBox.min().getZ() - 1 : cameraObjectBoundingBox.max().getZ() + 1;
 
-        for(;;){//for(int i = 0; i < 30; i++) {//should probably be while(true)
-            if(xt < yt && xt < zt){
-                if(voxels.containsKey(new VoxelPos(ix, iy, iz))){
-                    visited.add(voxels.get(new VoxelPos(ix, iy, iz)));
+        while (true) {
+            if (xt < yt && xt < zt) {
+                if (voxels.containsKey(new VoxelPosition(ix, iy, iz))) {
+                    visited.add(voxels.get(new VoxelPosition(ix, iy, iz)));
                 }
-
                 ix += xDir;
-                if(ix == xOut){
+                if (ix == xOut) {
                     return visited;
                 }
                 xt += xDelta;
-            } else if(yt < zt){
-                if(voxels.containsKey(new VoxelPos(ix, iy, iz))){
-                    visited.add(voxels.get(new VoxelPos(ix, iy, iz)));
+            } else if (yt < zt) {
+                if (voxels.containsKey(new VoxelPosition(ix, iy, iz))) {
+                    visited.add(voxels.get(new VoxelPosition(ix, iy, iz)));
                 }
                 iy += yDir;
-                if(iy == yOut){
+                if (iy == yOut) {
                     return visited;
                 }
                 yt += yDelta;
-            } else{
-                if(voxels.containsKey(new VoxelPos(ix, iy, iz))){
-                    visited.add(voxels.get(new VoxelPos(ix, iy, iz)));
+            } else {
+                if (voxels.containsKey(new VoxelPosition(ix, iy, iz))) {
+                    visited.add(voxels.get(new VoxelPosition(ix, iy, iz)));
                 }
-
                 iz += zDir;
-                if(iz == zOut){
+                if (iz == zOut) {
                     return visited;
                 }
                 zt += zDelta;
             }
-
-
         }
     }
 

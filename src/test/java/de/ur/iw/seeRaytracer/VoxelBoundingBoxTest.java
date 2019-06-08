@@ -7,34 +7,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class VoxelBoundingBoxTest {
 
     @org.junit.jupiter.api.BeforeEach
-    void setUp(){
+    void setUp() {
 
     }
 
     @org.junit.jupiter.api.AfterEach
-    void tearDown(){
+    void tearDown() {
 
     }
 
     @Test
-    void boundingBoxDimensionsIsCorrect(){
-        VoxelPos vp1 = new VoxelPos(-4, -2, 1);
-        VoxelPos vp2 = new VoxelPos(3, -5, 0);
-        VoxelPos vp3 = new VoxelPos(2, -1, 4);
-        VoxelPos[] args = new VoxelPos[]{vp1, vp2, vp3};
+    void boundingBoxDimensionsIsCorrect() {
+        VoxelPosition vp1 = new VoxelPosition(-4, -2, 1);
+        VoxelPosition vp2 = new VoxelPosition(3, -5, 0);
+        VoxelPosition vp3 = new VoxelPosition(2, -1, 4);
+        VoxelPosition[] args = new VoxelPosition[]{vp1, vp2, vp3};
         VoxelBoundingBox box = new VoxelBoundingBox(args);
-        assertEquals(new VoxelPos(-4, -5, 0), box.min());
-        assertEquals(new VoxelPos(3, -1, 4), box.max());
+        assertEquals(new VoxelPosition(-4, -5, 0), box.min());
+        assertEquals(new VoxelPosition(3, -1, 4), box.max());
     }
 
     @Test
-    void diagonalIsCorrect(){
+    void diagonalIsCorrect() {
 
-        VoxelBoundingBox box = new VoxelBoundingBox(new VoxelPos[]{new VoxelPos(0, 0, 0)});
-        double expectedDiagonal = Math.sqrt((Math.pow(Voxel.VOXEL_WIDTH, 2))*3);
-        assertEquals(expectedDiagonal, box.realSpaceEuclidianDiagonalLength(), 0.001);
+        VoxelBoundingBox box = new VoxelBoundingBox(new VoxelPosition[]{new VoxelPosition(0, 0, 0)});
+        double expectedDiagonal = Math.sqrt((Math.pow(Voxel.VOXEL_WIDTH, 2)) * 3);
+        assertEquals(expectedDiagonal, box.realSpaceEuclideanDiagonalLength(), 0.001);
     }
-
 
 
 }

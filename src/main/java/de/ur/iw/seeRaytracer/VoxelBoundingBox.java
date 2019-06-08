@@ -5,19 +5,19 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class VoxelBoundingBox {
 
-    private VoxelPos min;
-    private VoxelPos max;
+    private VoxelPosition min;
+    private VoxelPosition max;
 
-    public VoxelBoundingBox(VoxelPos[] positions){
+    public VoxelBoundingBox(VoxelPosition[] positions) {
         assert (positions != null);
         Preconditions.checkArgument(positions.length > 0);
 
-        min = VoxelPos.minForEachDimension(positions);
-        max = VoxelPos.maxForEachDimension(positions);
+        min = VoxelPosition.minForEachDimension(positions);
+        max = VoxelPosition.maxForEachDimension(positions);
     }
 
 
-    public double realSpaceEuclidianDiagonalLength(){
+    public double realSpaceEuclideanDiagonalLength() {
         Vector3D min = this.min.toRealSpaceVector3D();
         @SuppressWarnings("SuspiciousNameCombination")
         Vector3D max = this.max.toRealSpaceVector3D()
@@ -26,15 +26,13 @@ public class VoxelBoundingBox {
         return diagonal.getNorm();
     }
 
-    public VoxelPos min(){
+    public VoxelPosition min() {
         return min;
     }
 
-    public VoxelPos max(){
+    public VoxelPosition max() {
         return max;
     }
-
-
 
 
 }

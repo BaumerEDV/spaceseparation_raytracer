@@ -12,15 +12,15 @@ public class Voxel {
     public static final double VOXEL_WIDTH = 0.003825; //empirically tried. anything between 0.004 and 0.0026 seems to work well
 
     private ArrayList<Triangle> containedTriangles;
-    private VoxelPos coordinate;
+    private VoxelPosition coordinate;
 
-    public Voxel(VoxelPos coordinate) {
+    public Voxel(VoxelPosition coordinate) {
         assert (coordinate != null);
         this.coordinate = coordinate;
         containedTriangles = new ArrayList<>();
     }
 
-    public VoxelPos position(){
+    public VoxelPosition position() {
         return coordinate;
     }
 
@@ -39,6 +39,11 @@ public class Voxel {
         result &= v.getX() < voxelOriginOppositeX;
         result &= v.getY() < voxelOriginOppositeY;
         result &= v.getZ() < voxelOriginOppositeZ;
+
+        //TODO: there's a problem with floating point accuracy here, but I'm not sure what to do about it
+        // since it will create an error one way or the other. If I "fix" floating point accuracy for edges, it'll
+        // show points that are inside the voxel as outside, and it'll show points that are outside the voxel as inside
+
         return result;
     }
 
@@ -54,7 +59,6 @@ public class Voxel {
     public String toString() {
         return "Voxel (" + coordinate.getX() + ", " + coordinate.getY() + ", " + coordinate.getZ() + ")";
     }
-
 
 
 }
